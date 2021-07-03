@@ -3,7 +3,6 @@ from datetime import time
 import keras
 import tensorflow as tf
 from keras import regularizers
-from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.datasets import cifar10
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
@@ -30,43 +29,48 @@ def cnn():
 
     model = Sequential()
 
-    model.add(Conv2D(128, (3, 3), input_shape=(64,64,1)))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.1))
-
-    model.add(Conv2D(64, (3, 3)))
+    model.add(Conv2D(64, (3, 3), input_shape=(32,32,1)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.3))
 
+    model.add(Conv2D(32, (3, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.45))
+
+    model.add(Conv2D(32, (3, 3)))
+    model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.45))
+
     model.add(Flatten())  # this converts our 3D feature maps to 1D feature vectors
 
-    model.add(Dense(64))#, kernel_regularizer=regularizers.l2(0.0001)))
+    """model.add(Dense(64))#, kernel_regularizer=regularizers.l2(0.0001)))
     model.add(Activation("relu"))
     model.add(Dropout(0.5))
 
     model.add(Dense(32))  # , kernel_regularizer=regularizers.l2(0.0001)))
     model.add(Activation("relu"))
-    model.add(Dropout(0.2))
+    model.add(Dropout(0.2))"""
 
     model.add(Dense(6, kernel_regularizer=regularizers.l1(0.0001)))
-    #model.add(Activation("relu"))
+    model.add(Activation("relu"))
 
 
-    #model.add(Dense(1))
+    model.add(Dense(1))
     model.add(Activation('sigmoid'))
     tensor_board = TensorBoard(log_dir='logs/{}'.format(NAME_LOG))
     opt = keras.optimizers.Adam(learning_rate=0.001)
-    model.compile(loss='sparse_categorical_crossentropy',
+    model.compile(loss='categorical_crossentropy',
                   optimizer=opt,
                   metrics=['accuracy'])
-    y = make_list_number(y)
-    yi = numpy.array(y)
+    #y = make_list_number(y)
+    #yi = numpy.array(y)
     #print(yi[0])
     #print(y)
-    model.fit(X, yi, batch_size=32, epochs=32,  validation_split=0.1, callbacks=[tensor_board])
-    model.save('subota1.model')
+    model.fit(X, y, batch_size=32, epochs=32,  validation_split=0.1, callbacks=[tensor_board])
+    model.save('cetvrtak32.model')
 
 """model.add(Dense(64, kernel_regularizer=regularizers.l2(0.001)))
     model.add(Activation("relu"))
@@ -84,22 +88,17 @@ def make_list_number(y):
 
  for i in y:
      if(i==" Pieridae"):
-         new_y.append(0)
-
-     elif (i==" Nymphalidae"):
          new_y.append(1)
-     elif (i==" Hesperioidea" or i==" Hesperiidae"):
+     elif (i==" Nymphalidae"):
          new_y.append(2)
-
-     elif (i==" Lycaenidae"):
+     elif (i==" Hesperioidea"):
          new_y.append(3)
-     elif (i==" Papilionoidea" or i==" Papilionidae"):
+     elif (i==" Lycaenidae"):
          new_y.append(4)
-
-     else:
-
+     elif (i==" Papilionoidea"):
          new_y.append(5)
-
+     else:
+         new_y.append(6)
 
 
 

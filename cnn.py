@@ -115,7 +115,7 @@ def cnn():
 
 
 
-    model.add(Dense(6, kernel_regularizer=regularizers.l1(0.0001)))
+    model.add(Dense(6))#, kernel_regularizer=regularizers.l1(0.0001)))
     model.add(Activation('relu'))
     # model.add(MaxPooling2D(pool_size=(2, 2)))
 
