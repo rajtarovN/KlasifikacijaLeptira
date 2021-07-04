@@ -30,7 +30,66 @@ def prepare(filepath):
         pass
 
 
+def odredi(lista_po_klasama, ukupno, label, label2, param):
+    if(param==label or param==label2):
+        if(label=="Pieridae"):
+            lista_po_klasama[0]+=1
+            ukupno[0] += 1
+        elif label=="Nymphalidae":
+            lista_po_klasama[1] += 1
+            ukupno[1] += 1
+        elif label=="Hesperioidea":
+            lista_po_klasama[2]+=1
+            ukupno[2] += 1
+        elif label=="Lycaenidae":
+            lista_po_klasama[3] += 1
+            ukupno[3] += 1
+        elif label=="Papilionoidea":
+            lista_po_klasama[4]+=1
+            ukupno[4] += 1
+        else:
+            lista_po_klasama[5]+=1
+            ukupno[5] +=1
+
+    return lista_po_klasama, ukupno
+
+
+def ispisi_lepo(ukupno, lista_po_klasama):
+    broj=lista_po_klasama[0]*100/ukupno[0]
+    print("Total of Pieridae"+str(ukupno[0]))
+    print("Predicted " + str(lista_po_klasama[0]))
+    print("Class Pieridae: "+str(broj)+"%")
+    print()
+
+    broj = lista_po_klasama[1] * 100 / ukupno[1]
+    print("Total of Nymphalidae" + str(ukupno[1]))
+    print("Predicted " + str(lista_po_klasama[1]))
+    print("Class Nymphalidae: " + str(broj) + "%")
+    print()
+
+    broj = lista_po_klasama[2] * 100 / ukupno[2]
+    print("Total of Hesperioidea" + str(ukupno[2]))
+    print("Predicted " + str(lista_po_klasama[2]))
+    print("Class Hesperioidea: " + str(broj) + "%")
+    print()
+
+
+    broj = lista_po_klasama[3] * 100 / ukupno[3]
+    print("Total of Lycaenidae" + str(ukupno[3]))
+    print("Predicted " + str(lista_po_klasama[3]))
+    print("Class Lycaenidae: " + str(broj) + "%")
+    print()
+
+    broj = lista_po_klasama[4] * 100 / ukupno[4]
+    print("Total of Papilionoidea" + str(ukupno[4]))
+    print("Predicted " + str(lista_po_klasama[4]))
+    print("Class Papilionoidea: " + str(broj) + "%")
+
+
+
 def calculate_prediction(prediction_list, nazivi):
+    lista_po_klasama=[0,0,0,0,0]
+    ukupno=[0,0,0,0,0]
     dictionary_labels_img=make_dictionary()
     i=0
     tacnost_testa=0
@@ -62,13 +121,28 @@ def calculate_prediction(prediction_list, nazivi):
                 else:
                     label=""
                 it_str=str(item)
+                #print(dictionary_labels_img[nazivi[i].split(".jpg")[0]], nazivi[i])
                 #print(nazivi[i]+" have "+it_str+" % of "+label+" actualy it is type: "+ dictionary_labels_img[nazivi[i].split(".jpg")[0]])
                 #print((label==dictionary_labels_img[nazivi[i].split(".jpg")[0]] or label2==dictionary_labels_img[nazivi[i].split(".jpg")[0]]))
                 if((label==dictionary_labels_img[nazivi[i].split(".jpg")[0]].strip() or label2==dictionary_labels_img[nazivi[i].split(".jpg")[0]].strip())):
                     tacnost_testa+=1
                     predvidjena_klasa=True
+                    lista_po_klasama,ukupno=odredi(lista_po_klasama,ukupno,label, label2,dictionary_labels_img[nazivi[i].split(".jpg")[0]].strip())
                 else:
                     if( not predvidjena_klasa):
+                        klasa=dictionary_labels_img[nazivi[i].split(".jpg")[0]].strip()
+                        if (klasa == "Pieridae"):
+                            ukupno[0] += 1
+                        elif klasa == "Nymphalidae":
+                            ukupno[1] += 1
+                        elif klasa == "Hesperioidea" or klasa =="Hesperiidae":
+                            ukupno[2] += 1
+                        elif klasa == "Lycaenidae":
+                            ukupno[3] += 1
+                        elif klasa == "Papilionoidea" or klasa =="Papilionidae":
+                            ukupno[4] += 1
+                        else:
+                            ukupno[5] += 1
                         #print(nazivi[i] + " have " + it_str + " % of " + label + " actualy it is type: " +
                         #      dictionary_labels_img[nazivi[i].split(".jpg")[0]])
                         #print(one_prediction)
@@ -79,16 +153,19 @@ def calculate_prediction(prediction_list, nazivi):
                         greske_testa+=1
             j+=1
         i+=1
-    print(tacnost_testa)
-    print(greske_testa)
+    print("Number predicted as true: "+str(tacnost_testa))
+    print("Number of errors: "+str(greske_testa))
     krajnje=(100*tacnost_testa)/i
     print("Accuracy of test: "+ str(krajnje))
+    #print("Total"+str(ukupno))
+    print(lista_po_klasama)
+    ispisi_lepo(ukupno, lista_po_klasama)
 
 
 
 
 def check():
-    model = tf.keras.models.load_model("subota.model")
+    model = tf.keras.models.load_model("subota1.model")
     slike=[]
     nazivi=[]
     for img in tqdm(os.listdir("C:/Users/rajta/PycharmProjects/oriPrepoznavanjeLeptira/validation")):

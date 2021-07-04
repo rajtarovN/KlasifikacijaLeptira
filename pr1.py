@@ -66,7 +66,7 @@ def cnn():
     #print(yi[0])
     #print(y)
     model.fit(X, yi, batch_size=32, epochs=32,  validation_split=0.1, callbacks=[tensor_board])
-    model.save('subota1.model')
+    model.save('subota2.model')
 
 """model.add(Dense(64, kernel_regularizer=regularizers.l2(0.001)))
     model.add(Activation("relu"))
